@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Periode extends Model
 {
     use HasFactory;
+
+    public function Pendaftar()
+    {
+        return $this->hasMany(Pendaftar::class);
+    }
+    public function TahapPenilaian()
+    {
+        return $this->hasMany(TahapPenilaian::class);
+    }
 }
