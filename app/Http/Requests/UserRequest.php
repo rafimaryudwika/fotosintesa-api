@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UserRequest extends FormRequest
 {
@@ -26,8 +27,8 @@ class UserRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'email' => 'required|unique:user,email',
-            'no_hp' => 'required|unique:user,no_hp',
+            'email' => ['required',Rule::unique('users', 'email')->ignore($this->user)],
+            'no_hp' => ['required', Rule::unique('users', 'no_hp')->ignore($this->user)],
             'password' =>  'required|confirmed',
             'role' => 'required',
             'peserta' => 'required'

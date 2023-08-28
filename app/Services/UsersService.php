@@ -25,12 +25,12 @@ class UsersService
         return $this->userRepository->getData();
     }
 
-    public function getDataByID(int $id)
+    public function getDataByID(string $id)
     {
         return $this->userRepository->getData($id);
     }
 
-    public function requestData(UserRequest $request, int $id = null)
+    public function requestData(UserRequest $request, string $id = null)
     {
         // if (!$id) {
         //     return $this->userRepository->requestData($request);
@@ -39,7 +39,7 @@ class UsersService
         return $this->userRepository->requestData($request, !$id ? null : $id);
     }
 
-    public function deleteData(int $id)
+    public function deleteData(string $id)
     {
         return $this->userRepository->deleteData($id);
     }

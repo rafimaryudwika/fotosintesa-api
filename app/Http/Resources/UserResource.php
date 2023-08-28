@@ -14,9 +14,10 @@ class UserResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' =>$this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'no_hp' => ('0' .   strval($this->no_hp)),
+            'no_hp' => $this->no_hp,
             'role' => $this->Roles->name,
             'peserta' => ($this->peserta === 0 ? 'false' : 'true'),
         ];
