@@ -25,8 +25,8 @@ class KriteriaPenilaianRepository
     }
 
     /**
-    getData() menggabungkan query mengambil semua data
-    dengan mengambil satu data agar kodingan terlihat lebih ringkas
+    *getData() menggabungkan query mengambil semua data
+    *dengan mengambil satu data agar kodingan terlihat lebih ringkas
      */
     public function getData(int $periodeId, string $id = null)
     {
