@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Pendaftar;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -20,19 +21,25 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
+            'nim' => [
+                'required',
+                'integer',
+                'max:10',
+                Rule::unique(Pendaftar::class, 'nim'),
+            ],
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique(User::class),
+                Rule::unique(User::class, 'email'),
             ],
             'no_hp' => [
                 'required',
                 'int',
                 'max:14',
-                Rule::unique(User::class),
+                Rule::unique(User::class, 'no_hp'),
             ],
             'password' => $this->passwordRules(),
         ])->validate();
