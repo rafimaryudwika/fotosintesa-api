@@ -3,22 +3,22 @@
 namespace App\Repositories;
 
 use App\Models\DetailPenilaian;
+use App\Models\KegiatanPenilaian;
 use Exception;
 use App\Traits\ResponseAPI;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\KriteriaPenilaian;
-use App\Models\PenilaianPeserta;
-use App\Models\SubKriteriaPenilaian;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SubKriteriaPenilaianRepository
 {
     use ResponseAPI;
-    public function __construct(protected SubKriteriaPenilaian $subKriteriaPenilaian, protected KriteriaPenilaian $kriteriaPenilaian, protected Arr $array)
-    {
-    }
+    public function __construct(
+        protected KriteriaPenilaian $subKriteriaPenilaian,
+        protected KegiatanPenilaian $kriteriaPenilaian,
+        protected Arr $array
+        ) {}
 
     public function getAllData($tahapID)
     {

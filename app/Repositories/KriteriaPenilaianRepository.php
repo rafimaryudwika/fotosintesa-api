@@ -7,6 +7,7 @@ use App\Traits\ResponseAPI;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\DetailPenilaian;
+use App\Models\KegiatanPenilaian;
 use App\Models\KriteriaPenilaian;
 use App\Models\SubKriteriaPenilaian;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,8 +17,8 @@ class KriteriaPenilaianRepository
     use ResponseAPI;
 
     public function __construct(
-        protected KriteriaPenilaian $kriteriaPenilaian,
-        protected SubKriteriaPenilaian $subKriteriaPenilaian,
+        protected KegiatanPenilaian $kriteriaPenilaian,
+        protected KriteriaPenilaian $subKriteriaPenilaian,
         protected DetailPenilaian $detailPenilaian,
         protected Arr $array
     ) {
@@ -27,7 +28,7 @@ class KriteriaPenilaianRepository
     getData() menggabungkan query mengambil semua data
     dengan mengambil satu data agar kodingan terlihat lebih ringkas
      */
-    public function getData(int $periodeId, int $id = null)
+    public function getData(int $periodeId, string $id = null)
     {
         $query = $this->kriteriaPenilaian
             ->whereHas('TahapanPenilaian', fn ($q) => $q->where('periode', $periodeId))
@@ -37,7 +38,7 @@ class KriteriaPenilaianRepository
         return $query;
     }
 
-    public function requestData($request, int $periodeId, int $tahapId, int $id = null)
+    public function requestData($request, int $periodeId, int $tahapId, string $id = null)
     {
         try {
             $a = 1;
@@ -93,7 +94,7 @@ class KriteriaPenilaianRepository
         }
     }
 
-    public function deleteData(int $periodeId, int $tahapId, int $id)
+    public function deleteData(int $periodeId, int $tahapId, string $id)
     {
         $kriteria = $this->kriteriaPenilaian
             ->whereHas('TahapPenilaian', fn ($q) => $q->where(['periode' => $periodeId]))

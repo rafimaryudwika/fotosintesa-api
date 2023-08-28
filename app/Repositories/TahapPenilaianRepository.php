@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\TahapPenilaian;
 use App\Models\DetailPenilaian;
-use App\Models\KriteriaPenilaian;
+use App\Models\KegiatanPenilaian;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -19,13 +19,13 @@ class TahapPenilaianRepository
 
     public function __construct(
         protected TahapPenilaian $tahapPenilaian,
-        protected KriteriaPenilaian $kriteriaPenilaian,
+        protected KegiatanPenilaian $kriteriaPenilaian,
         protected DetailPenilaian $detailPenilaian,
         protected Arr $array
     ) {
     }
 
-    public function getData(int $periodeId, int $id = null)
+    public function getData(int $periodeId, string $id = null)
     {
         $query = $this->tahapPenilaian
             ->where('periode', $periodeId)
@@ -43,7 +43,7 @@ class TahapPenilaianRepository
             ->get();
     }
 
-    public function getDataByID(int $periodeId, int $id)
+    public function getDataByID(int $periodeId, string $id)
     {
         // try {
         return $this->getAllData($periodeId)
@@ -84,7 +84,7 @@ class TahapPenilaianRepository
         // }
     }
 
-    public function deleteData(int $periodeId, int $id)
+    public function deleteData(int $periodeId, string $id)
     {
         $tahapPenilaian = $this->tahapPenilaian
             ->where('periode', $periodeId)

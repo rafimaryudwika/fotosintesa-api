@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class TahapPenilaian extends Model
 {
-    use HasFactory;
+    public function Periode()
+    {
+        return $this->belongsTo(Periode::class, 'periode');
+    }
+
+    public function KegiatanPenilaian()
+    {
+        return $this->hasMany(KegiatanPenilaian::class);
+    }
 }
