@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_penilaians', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('peserta')->constrained('penilaian_pesertas');
-            $table->foreignId('kriteria')->constrained('kriteria_penilaians');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('peserta')->constrained('pesertas');
+            $table->foreignUlid('kriteria')->constrained('kriteria_penilaians');
             $table->float('nilai');
             $table->timestamps();
         });

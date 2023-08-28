@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('penilaian_pesertas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('peserta_id')->constrained('pesertas');
-            $table->foreignId('bukti_kelulusan')->constrained('penilaian_pesertas', 'id')->nullable();
-            $table->foreignId('tahap')->constrained('tahap_penilaians');
-            $table->boolean('lulus')->nullable();
-            $table->timestamps();
-        });
+        // Schema::create('pesertas', function (Blueprint $table) {
+        //     $table->ulid('id')->primary();
+        //     $table->foreignUlid('peserta_id')->constrained('pendaftars');
+        //     $table->foreignUlid('tahap')->constrained('tahap_penilaians');
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penilaian_pesertas');
+        // Schema::dropIfExists('pesertas');
     }
 };

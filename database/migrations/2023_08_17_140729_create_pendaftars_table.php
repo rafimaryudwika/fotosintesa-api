@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('pendaftars', function (Blueprint $table) {
             $table->date('tgl_daftar');
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->integer('nim');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignUlid('user_id')->constrained('users');
             $table->string('name');
             $table->boolean('daftar_ulang');
         });

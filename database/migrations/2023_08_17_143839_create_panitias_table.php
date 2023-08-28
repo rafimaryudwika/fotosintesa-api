@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('panitias', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('user_id')->constrained('users');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained('users');
             $table->string('name');
             $table->integer('nra');
             $table->timestamps();

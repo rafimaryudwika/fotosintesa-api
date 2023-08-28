@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tahap_penilaians', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->integer('nomor');
-            $table->foreignId('periode')->constrained('periodes');
+            $table->foreignUlid('periode')->constrained('periodes');
             $table->string('name');
             $table->string('singkatan');
             $table->string('snakecase_name');
             $table->timestamps();
+        });
+        Schema::table('pesertas',function (Blueprint $table) {
+            $table->foreignUlid('tahap')->constrained('tahap_penilaians');
         });
     }
 

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kriteria_penilaians', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->string('name');
-            $table->foreignId('kegiatan')->constrained('kegiatan_penilaians');
+            $table->foreignUlid('kegiatan')->constrained('kegiatan_penilaians');
             $table->string('kode');
             $table->string('snakecase_name');
             $table->float('bobot');

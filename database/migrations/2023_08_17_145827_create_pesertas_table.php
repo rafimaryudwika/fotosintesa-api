@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pesertas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('peserta_id')->constrained('pendaftars');
-            $table->boolean('lulus');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('peserta_id')->constrained('pendaftars');
             $table->timestamps();
         });
     }

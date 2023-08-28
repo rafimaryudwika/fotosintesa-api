@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_pendaftars', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('pendaftar_id')->constrained('pendaftars');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('pendaftar_id')->constrained('pendaftars');
             $table->string('panggilan');
             $table->foreignId('gender_id')->constrained('jenis_kelamins');
             $table->string('tempat_lahir');

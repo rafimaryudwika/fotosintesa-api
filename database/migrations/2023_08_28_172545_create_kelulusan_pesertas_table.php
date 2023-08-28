@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('kelulusan_pesertas', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('no_hp', 20)->unique();
-            $table->string('password');
-            $table->boolean('peserta');
-            $table->rememberToken();
+            $table->foreignUlid('peserta')->constrained('pesertas')->nullable();
+            $table->boolean('lulus')->nullable();
             $table->timestamps();
+        });
+
+        Schema::table('pesertas',function (Blueprint $table) {
+            $table->foreignUlid('bukti_kelulusan')->constrained('kelulusan_pesertas');
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('kelulusan_pesertas');
     }
 };

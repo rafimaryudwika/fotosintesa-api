@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('peserta_kinesiasis', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('peserta_id')->constrained('pesertas');
-            $table->boolean('kehadiran');
-            $table->timestamps();
-        });
+        // Schema::create('peserta_kinesiasis', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignUlid('peserta_id')->constrained('pesertas');
+        //     $table->boolean('kehadiran');
+        //     $table->timestamps();
+        // });
     }
 
     /**

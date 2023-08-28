@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('periodes', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->integer('name'); //tahun periode kegiatan
             $table->boolean('selesai'); //apakah pelaksanaan kegiatan fotosintesa sudah selesai
             $table->timestamps();
         });
 
         Schema::table('pendaftars', function (Blueprint $table) {
-            $table->foreignId('periode')->constrained('periodes');
+            $table->foreignUlid('periode')->constrained('periodes');
         });
     }
 
