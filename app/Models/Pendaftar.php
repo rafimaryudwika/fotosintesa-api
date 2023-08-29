@@ -19,7 +19,7 @@ class Pendaftar extends Model
 
     public function Peserta()
     {
-        return $this->hasOne(Peserta::class);
+        return $this->hasMany(Peserta::class);
     }
 
     public function Periode()

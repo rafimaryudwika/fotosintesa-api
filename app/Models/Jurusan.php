@@ -10,7 +10,7 @@ class Jurusan extends Model
     {
         return $this->belongsTo(Fakultas::class, 'fakultas_id',);
     }
-    public function Pendaftar()
+    public function DetailPendaftar()
     {
         return $this->hasMany(DetailPendaftar::class);
     }

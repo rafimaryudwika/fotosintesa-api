@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class JenisKelamin extends Model
 {
-    public function Pendaftar()
+    public function DetailPendaftar()
     {
         return $this->hasMany(DetailPendaftar::class, 'id');
     }
