@@ -88,7 +88,9 @@ class PeriodeController extends Controller
         } catch (ModelNotFoundException $e) {
             return $this->error("Periode tidak ditemukan!", 404);
         } catch (Exception $e) {
-            return $this->error($e->getMessage(), 500);
+            return $this->error(
+                $e->getMessage(),
+                is_int($e->getCode()) ? $e->getCode() : 500); //perhatikan pada is_int, jika kode error dari Exception bukanlah integer maka kode error 500 yang digunakan
         }
     }
 }
