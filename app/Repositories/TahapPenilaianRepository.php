@@ -2,21 +2,18 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\TahapPenilaianResource;
 use Exception;
 use App\Traits\ResponseAPI;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\TahapPenilaian;
+use Illuminate\Support\Carbon;
 use App\Models\DetailPenilaian;
 use App\Models\KegiatanPenilaian;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-
 
 class TahapPenilaianRepository
 {
-    use ResponseAPI;
-
     public function __construct(
         protected TahapPenilaian $tahapPenilaian,
         protected KegiatanPenilaian $kriteriaPenilaian,
@@ -25,66 +22,55 @@ class TahapPenilaianRepository
     ) {
     }
 
-    public function getData(int $periodeId, string $id = null)
+    public function getData(string $periodeId, string $id = null)
     {
         $query = $this->tahapPenilaian
             ->where('periode', $periodeId)
-            ->when($id, fn ($query)
-            => $query->where('nomor', $id))
             ->get();
 
-        return $query;
+        if (!$id) return TahapPenilaianResource::collection($query);
+
+        $single = $query
+        ->where('id', $id)
+        ->first();
+
+        return new TahapPenilaianResource($single);
     }
 
-    public function getAllData(int $periodeId)
-    {
-        return $this->tahapPenilaian
-            ->where('periode', $periodeId)
-            ->get();
-    }
-
-    public function getDataByID(int $periodeId, string $id)
-    {
-        // try {
-        return $this->getAllData($periodeId)
-            ->findOrFail($id);
-        // } catch (ModelNotFoundException $e) {
-        //     return $this->error(
-        //         'Data tidak ditemukan',
-        //         404
-        //     );
-        // }
-    }
-
-    public function requestData($request, int $periodeId, $id = null)
+    public function requestData($request, string $periodeId, $id = null)
     {
         $a = 1;
-        // try {
-        $latestTahapId = $this->tahapPenilaian->max('nomor') ?: $a;
+        $latestTahapId = $this->tahapPenilaian->max('nomor');
 
         $params = [
-            'nomor' => $latestTahapId + $a,
+            'id' => Str::ulid(),
+            'nomor' => (!$latestTahapId ? $a : $latestTahapId + $a),
             'periode' => $periodeId,
-            'name' => $request->kriteria,
-            'kode' => $request->kode,
-            'snakecase_name' => Str::snake($request->kriteria),
+            'name' => $request->name,
+            'singkatan' => $request->singkatan,
+            'snakecase_name' => Str::snake($request->name),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ];
 
-        if (!$id) {
-            $tahap = $this->tahapPenilaian->create($params);
-            // return $this->success('Berhasil menambahkan tahap penilaian', $tahap, 201);
-        }
+        if (!$id) return $tahap = $this->tahapPenilaian->insert($params);
 
         $tahap = $this->tahapPenilaian->where('periode', $periodeId)->findOrFail($id);
-        return $tahap->update($this->array->except($params, ['nomor', 'periode']));
-
-        // return $this->success('Berhasil mengupdate tahap penilaian', $tahap);
-        // } catch (Exception $e) {
-        //     return $this->error($e->getMessage(), $e->getCode());
-        // }
+        return $tahap->update(
+            $this->array
+                ->except(
+                    $params,
+                    [
+                        'id',
+                        'nomor',
+                        'periode',
+                        'created_at'
+                    ]
+                )
+        );
     }
 
-    public function deleteData(int $periodeId, string $id)
+    public function deleteData(string $periodeId, string $id)
     {
         $tahapPenilaian = $this->tahapPenilaian
             ->where('periode', $periodeId)
@@ -96,17 +82,17 @@ class TahapPenilaianRepository
 
         $kriteriaIds = $this->kriteriaPenilaian
             ->where('tahap_penilaian', $id)
-            ->pluck('nomor');
+            ->pluck('tahap_penilaian');
 
         if ($kriteriaCount > 1) {
             $errMsg = 'Tahapan Penilaian gagal dihapus karena tahapan
              tersebut sudah dipakai lebih dari 1 kriteria,
-             mohon hapus sub-kriteria terlebih dahulu';
+             mohon hapus kriteria terlebih dahulu';
             throw new Exception($errMsg, 422);
         }
 
         $penilaianCount = $this->detailPenilaian
-            ->whereHas('SubkriteriaPenilaian', fn ($q) => $q->whereIn('subkriteria_id', $kriteriaIds))
+            ->whereHas('KriteriaPenilaian', fn ($q) => $q->whereIn('kegiatan', $kriteriaIds))
             ->count();
 
         if ($penilaianCount >= 1) {
@@ -114,10 +100,6 @@ class TahapPenilaianRepository
              salah satu kriteria sudah dipakai untuk penilaian';
             throw new Exception($errMsg, 422);
         }
-
-        $this->kriteriaPenilaian
-            ->whereIn('nomor', $kriteriaIds)
-            ->delete();
 
         $tahapPenilaian->delete();
     }

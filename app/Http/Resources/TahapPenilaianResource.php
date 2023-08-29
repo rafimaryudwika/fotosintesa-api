@@ -15,7 +15,9 @@ class TahapPenilaianResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->nomor,
+            'id' => $this->id,
+            'periode' => $this->Periode->name,
+            'nomor' => $this->nomor,
             'name' => $this->name,
             'inisial' => $this->singkatan,
             'snakecase' => $this->snakecase_name,

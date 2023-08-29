@@ -12,9 +12,8 @@ class TahapPenilaianRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = Auth::user()->id;
-        $peserta = Auth::user()->peserta;
-        return $user === 4 || $peserta === true;
+        $user = Auth::user()->role;
+        return $user === 1;
     }
 
     /**
@@ -25,8 +24,6 @@ class TahapPenilaianRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nomor' => 'required|unique:tahap_penilaians,nomor',
-            'periode' => 'required|integer',
             'name' => 'required',
             'singkatan' =>  'required'
         ];

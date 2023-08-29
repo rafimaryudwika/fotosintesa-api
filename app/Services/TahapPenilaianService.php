@@ -10,22 +10,21 @@ use App\Repositories\TahapPenilaianRepository;
  */
 class TahapPenilaianService
 {
-    public function __construct(protected TahapPenilaianRepository $tpRepo)
-    {
+    public function __construct(
+        protected TahapPenilaianRepository $tpRepo
+    ) {}
 
-    }
-
-    public function getAllData(int $periodeId)
+    public function getAllData(string $periodeId)
     {
         return $this->tpRepo->getData($periodeId);
     }
 
-    public function getDataByID(int $periodeId, string $id)
+    public function getDataByID(string $periodeId, string $id)
     {
         return $this->tpRepo->getData($periodeId, $id);
     }
 
-    public function requestData(TahapPenilaianRequest $request, int $periodeId, string $id = null)
+    public function requestData(TahapPenilaianRequest $request, string $periodeId, string $id = null)
     {
         // if(!$id) {
         //     return $this->tpRepo->requestData($request, $periodeId);
@@ -34,7 +33,7 @@ class TahapPenilaianService
         return $this->tpRepo->requestData($request, $periodeId, !$id ? null : $id);
     }
 
-    public function deleteData(int $periodeId, string $id)
+    public function deleteData(string $periodeId, string $id)
     {
         return $this->tpRepo->deleteData($periodeId, $id);
     }
