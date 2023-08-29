@@ -69,13 +69,11 @@ class PeriodeRepository
         ->firstOrFail();
 
         $tahapanCount = $this->tahap
-        ->where('periode', $periode)
+        ->where('periode', $id)
         ->count();
 
-        if ($tahapanCount > 1) {
-            $errMsg = 'Periode Penilaian gagal dihapus karena periode
-             tersebut sudah dipakai lebih dari 1 tahapan,
-             mohon hapus tahapan terlebih dahulu';
+        if ($tahapanCount >= 1) {
+            $errMsg = 'Periode Penilaian gagal dihapus karena periode tersebut sudah dipakai lebih dari 1 tahapan, mohon hapus tahapan terlebih dahulu';
             throw new Exception($errMsg, 422);
         }
 
