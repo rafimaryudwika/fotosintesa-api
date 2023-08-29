@@ -12,7 +12,7 @@ use App\Models\KriteriaPenilaian;
 use App\Models\SubKriteriaPenilaian;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class KriteriaPenilaianRepository
+class KegiatanPenilaianRepository
 {
     use ResponseAPI;
 
