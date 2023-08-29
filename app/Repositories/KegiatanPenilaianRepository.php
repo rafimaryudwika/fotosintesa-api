@@ -6,10 +6,12 @@ use Exception;
 use App\Traits\ResponseAPI;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Models\TahapPenilaian;
+use Illuminate\Support\Carbon;
 use App\Models\DetailPenilaian;
 use App\Models\KegiatanPenilaian;
 use App\Models\KriteriaPenilaian;
-use App\Models\SubKriteriaPenilaian;
+use App\Http\Requests\KegiatanPenilaianRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class KegiatanPenilaianRepository
@@ -17,132 +19,128 @@ class KegiatanPenilaianRepository
     use ResponseAPI;
 
     public function __construct(
-        protected KegiatanPenilaian $kriteriaPenilaian,
-        protected KriteriaPenilaian $subKriteriaPenilaian,
+        protected TahapPenilaian $tahapanPenilaian,
+        protected KegiatanPenilaian $kegiatanPenilaian,
+        protected KriteriaPenilaian $kriteriaPenilaian,
         protected DetailPenilaian $detailPenilaian,
         protected Arr $array
     ) {
     }
 
     /**
-    *getData() menggabungkan query mengambil semua data
-    *dengan mengambil satu data agar kodingan terlihat lebih ringkas
+     *getData() menggabungkan query mengambil semua data
+     *dengan mengambil satu data agar kodingan terlihat lebih ringkas
      */
-    public function getData(int $periodeId, string $id = null)
+    public function getData(string $periodeId, string $tahapanId, string $id = null)
     {
-        $query = $this->kriteriaPenilaian
-            ->whereHas('TahapanPenilaian', fn ($q) => $q->where('periode', $periodeId))
-            ->when($id, fn ($query) => $query->where('nomor', $id))
+        $query = $this->kegiatanPenilaian
+            ->whereHas('TahapPenilaian', fn ($q) => $q->where('periode', $periodeId))
+            ->where('tahap_penilaian', $tahapanId)
             ->get();
 
-        return $query;
+        $count = $query->count();
+        $sum = round($query->sum('bobot'), 2);
+        $balance = 100 - $sum < 0.1 ? 'Seimbang' : 'TIDAK SEIMBANG!!';
+
+
+        $additionalInfo = [
+            'jumlah_kegiatan' => $count,
+            'rata-rata bobot' =>$sum,
+            'keseimbangan' => $balance
+        ];
+
+        if (!$id) return [$query, $additionalInfo];
+
+        return $query->where('id', $id);
     }
 
-    public function requestData($request, int $periodeId, int $tahapId, string $id = null)
+    public function requestData(KegiatanPenilaianRequest $request, string $periodeId, string $tahapId, string $id = null)
     {
-        try {
-            $a = 1;
+        $a = 1;
 
-            $latestKriteriaId = optional($this->kriteriaPenilaian
-                ->whereHas('TahapPenilaian', fn ($q) => $q->where(['periode' => $periodeId]))
-                ->where('tahap_penilaian', $tahapId)
-                ->latest('nomor')->first())->nomor ?: $a;
+        $latestTahapanId = $this->tahapanPenilaian
+            ->where('periode', $periodeId)
+            ->first()->nomor;
 
-            $params = [
-                'name' => $request->kriteria,
-                'kode' => $request->kode,
-                'snakecase_name' => Str::snake($request->kriteria),
-                'bobot' => $request->bobot,
-            ];
-
-            if (!$id) {
-                $nomor = $latestKriteriaId + $a;
-                $kriteriaParams = ['nomor' => $nomor] + $params;
-                $subKriteriaParams = [
-                    'nomor' => $nomor,
-                    'kegiatan' => $latestKriteriaId
-                ] + $params;
-
-                $kriteria = $this->kriteriaPenilaian
-                    ->create($kriteriaParams);
-                $this->subKriteriaPenilaian
-                    ->create($subKriteriaParams);
-            } else {
-                $kriteria = $this->kriteriaPenilaian
-                    ->where('nomor', $id)
-                    ->firstOrFail();
-                $kriteria->update($params);
-            }
-
-            return $this->success(
-                !$id
-                    ? 'Data kriteria berhasil dibuat'
-                    : 'Data kriteria berhasil diupdate',
-                $kriteria,
-                !$id ? 201 : 200
-            );
-        } catch (ModelNotFoundException $e) {
-            return $this->error(
-                $e->getMessage(),
-                $e->getCode()
-            );
-        } catch (Exception $e) {
-            return $this->error(
-                $e->getMessage(),
-                $e->getCode()
-            );
-        }
-    }
-
-    public function deleteData(int $periodeId, int $tahapId, string $id)
-    {
-        $kriteria = $this->kriteriaPenilaian
+        $latestKegiatanId = $this->kegiatanPenilaian
             ->whereHas('TahapPenilaian', fn ($q) => $q->where(['periode' => $periodeId]))
-            ->where(['nomor' => $id, 'tahap_penilaian' => $tahapId])
+            ->where('tahap_penilaian', $tahapId)
+            ->latest('nomor')->count();
+
+        $params = [
+            'name' => $request->name,
+            'kode' => $request->kode,
+            'snakecase_name' => Str::snake($request->name),
+            'bobot' => $request->bobot,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ];
+
+        if (!$id) {
+            $kegiatanUlid = Str::ulid();
+
+            $nomor = $latestTahapanId . (!$latestKegiatanId ? $a : $latestKegiatanId + $a) ;
+            $kegiatanParams = [
+                'id' => $kegiatanUlid,
+                'nomor' => $nomor,
+                'tahap_penilaian' => $tahapId,
+            ] + $params;
+            $kriteriaParams = [
+                'id' => Str::ulid(),
+                'nomor' => $nomor . $a,
+                'kegiatan' => $kegiatanUlid
+            ] + $params;
+
+            $kegiatan = $this->kegiatanPenilaian
+                ->create($kegiatanParams);
+            $this->kriteriaPenilaian
+                ->create($kriteriaParams);
+        } else {
+            $kegiatan = $this->kegiatanPenilaian
+                ->where('id', $id)
+                ->firstOrFail();
+            $kegiatan->update($this->array
+                ->except($params, ['created_at']));
+        }
+
+        return $kegiatan;
+    }
+
+    public function deleteData(string $periodeId, string $tahapId, string $id)
+    {
+        $kegiatan = $this->kegiatanPenilaian
+            ->whereHas('TahapPenilaian', fn ($q) => $q->where(['periode' => $periodeId]))
+            ->where(['id' => $id, 'tahap_penilaian' => $tahapId])
             ->firstOrFail();
-        try {
-            $subKriteriaCount = $this->subKriteriaPenilaian
+
+            $kriteriaCount = $this->kriteriaPenilaian
                 ->where('kegiatan', $id)
                 ->count();
 
-            $subKriteriaIds = $this->subKriteriaPenilaian
+            $kriteriaIds = $this->kriteriaPenilaian
                 ->where('kegiatan', $id)
-                ->pluck('nomor');
+                ->pluck('id');
 
-            if ($subKriteriaCount > 1) {
-                $errMsg = 'Kriteria gagal dihapus karena kriteria
-                 tersebut sudah dipakai lebih dari 1 sub-kriteria,
-                 mohon hapus sub-kriteria terlebih dahulu';
+            if ($kriteriaCount > 1) {
+                $errMsg = 'Kriteria gagal dihapus karena kriteria tersebut sudah dipakai lebih dari 1 sub-kriteria, mohon hapus sub-kriteria terlebih dahulu';
                 throw new Exception($errMsg, 422);
             }
             $penilaianCount = $this->detailPenilaian
-                ->whereIn('subkriteria_id', $subKriteriaIds)->count();
+                ->whereIn('kriteria', $kriteriaIds)->count();
 
             if ($penilaianCount >= 1) {
-                $errMsg = 'Kriteria gagal dihapus karena
-                 salah satu sub-kriteria sudah dipakai untuk penilaian';
+                $errMsg = 'Kriteria gagal dihapus karena salah satu sub-kriteria sudah dipakai untuk penilaian';
                 throw new Exception($errMsg, 422);
             }
 
-            $this->subKriteriaPenilaian
-                ->whereIn('nomor', $subKriteriaIds)
+            $this->kriteriaPenilaian
+                ->whereIn('id', $kriteriaIds)
                 ->delete();
 
-            $kriteria->delete();
+            $kegiatan->delete();
 
-            return $this->success(
-                'Kriteria and its subkriteria deleted',
-                compact(
-                    'subKriteriaCount',
-                    'kriteria'
-                ),
-                200
-            );
-        } catch (Exception $e) {
-            return $this->error(
-                $e->getMessage(),
-                $e->getCode()
-            );
-        }
+            return $kegiatan;
+
+
     }
 }

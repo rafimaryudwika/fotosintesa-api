@@ -2,24 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\KegiatanPenilaianRequest;
+use Exception;
+use App\Traits\ResponseAPI;
 use App\Models\KriteriaPenilaian;
+use App\Services\KegiatanPenilaianService;
 
 class KegiatanPenilaianController extends Controller
 {
+    use ResponseAPI;
+
+    public function __construct(
+        protected KegiatanPenilaianService $kpService
+    ) {}
     /**
      * Display a listing of the resource.
      */
     public function index(string $periodeId, string $tahapanId)
     {
-        return [$periodeId, $tahapanId];
+        try {
+            $req = $this->kpService->getAllData($periodeId, $tahapanId);
+            return $this->success('Data kegiatan penilaian', $req);
+        } catch (Exception $e) {
+            if (!$e->getCode() || !is_int($e->getCode())) return response()->json($e->__toString(), 500);
+            return $this->error($e->getMessage(), 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(string $periodeId, string $tahapanId, $request)
+    public function store(string $periodeId, string $tahapanId, KegiatanPenilaianRequest $request)
     {
-        //
+        try {
+            $req = $this->kpService->requestData($periodeId, $tahapanId, $request);
+            return $this->success('Kegiatan penilaian berhasil dibuat', $req, 201);
+        } catch (Exception $e) {
+            if (!$e->getCode() || !is_int($e->getCode())) return response()->json($e->__toString(), 500);
+            return $this->error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -27,15 +48,27 @@ class KegiatanPenilaianController extends Controller
      */
     public function show(string $periodeId, string $tahapanId, string $id)
     {
-        return [$periodeId, $tahapanId, $id];
+        try {
+            $req = $this->kpService->getDataById($periodeId, $tahapanId, $id);
+            return $this->success('Data salah satu kegiatan penilaian', $req);
+        } catch (Exception $e) {
+            if (!$e->getCode() || !is_int($e->getCode())) return response()->json($e->__toString(), 500);
+            return $this->error($e->getMessage(), 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $periodeId, string $tahapanId, string $id, $request)
+    public function update(string $periodeId, string $tahapanId, string $id, KegiatanPenilaianRequest $request)
     {
-        //
+        try {
+            $req = $this->kpService->requestData($periodeId, $tahapanId, $request, $id);
+            return $this->success('Kegiatan penilaian berhasil diupdate', $req);
+        } catch (Exception $e) {
+            if (!$e->getCode() || !is_int($e->getCode())) return response()->json($e->__toString(), 500);
+            return $this->error($e->getMessage(), 500);
+        }
     }
 
     /**
@@ -43,6 +76,12 @@ class KegiatanPenilaianController extends Controller
      */
     public function destroy(string $periodeId, string $tahapanId, string $id)
     {
-        //
+        try {
+            $req = $this->kpService->deleteData($periodeId, $tahapanId, $id);
+            return $this->success('Kegiatan penilaian berhasil dihapus', $req);
+        } catch (Exception $e) {
+            if (!$e->getCode() || !is_int($e->getCode())) return response()->json($e->__toString(), 500);
+            return $this->error($e->getMessage(), 500);
+        }
     }
 }

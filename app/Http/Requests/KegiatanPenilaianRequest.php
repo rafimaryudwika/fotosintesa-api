@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class KegiatanPenilaianRequest extends FormRequest
@@ -11,7 +12,8 @@ class KegiatanPenilaianRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = Auth::user()->role;
+        return $user === 1;
     }
 
     /**
@@ -22,7 +24,9 @@ class KegiatanPenilaianRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'kode' =>  'required',
+            'bobot' => 'required'
         ];
     }
 }

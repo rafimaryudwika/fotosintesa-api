@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KegiatanPenilaian extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUlids;
+
+    protected $fillable = [
+        'id', 'nomor', 'name', 'tahap_penilaian', 'kode', 'snakecase_name', 'bobot'
+    ];
 
     public function TahapPenilaian()
     {
