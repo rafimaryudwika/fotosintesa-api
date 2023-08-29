@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\KriteriaPenilaian;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class SubKriteriaPenilaianRepository
+class KriteriaPenilaianRepository
 {
     use ResponseAPI;
     public function __construct(
