@@ -29,6 +29,6 @@ class FakultasSeeder extends Seeder
             ['id' => 14, 'name' => 'Kedokteran Gigi', 'bidang_fakultas_id' => 1],
             ['id' => 15, 'name' => 'Teknologi Informasi', 'bidang_fakultas_id' => 1],
         ];
-        DB::table('fakultas')->updateOrInsert($data);
+        DB::table('fakultas')->insert($data);
     }
 }

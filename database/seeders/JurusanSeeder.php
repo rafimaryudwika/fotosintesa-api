@@ -32,6 +32,10 @@ class JurusanSeeder extends Seeder
             ['id' => 52, 'name' => 'Manajemen','fakultas_id' => 5],
             ['id' => 53, 'name' => 'Akuntansi','fakultas_id' => 5],
             ['id' => 57, 'name' => 'Ekonomi Islam','fakultas_id' => 5],
+            ['id' => 510, 'name' => 'D3 Pemasaran','fakultas_id' => 5],
+            ['id' => 520, 'name' => 'D3 Kesekretariatan','fakultas_id' => 5],
+            ['id' => 530, 'name' => 'D3 Manajemen Perkantoran','fakultas_id' => 5],
+            ['id' => 540, 'name' => 'D3 Keuangan','fakultas_id' => 5],
             ['id' => 61, 'name' => 'Peternakan','fakultas_id' => 6],
             ['id' => 71, 'name' => 'Ilmu Sejarah','fakultas_id' => 7],
             ['id' => 72, 'name' => 'Sastra Indonesia','fakultas_id' => 7],
@@ -62,6 +66,6 @@ class JurusanSeeder extends Seeder
             ['id' => 152, 'name' => 'Sistem Informasi','fakultas_id' => 15],
             ['id' => 153, 'name' => 'Informatika','fakultas_id' => 15],
         ];
-        DB::table('jurusans')->updateOrInsert($data);
+        DB::table('jurusans')->insert($data);
     }
 }
