@@ -14,9 +14,14 @@ class KriteriaPenilaian extends Model
         'id', 'nomor', 'name', 'kegiatan', 'kode', 'snakecase_name', 'bobot'
     ];
 
-    public function KegitanPenilaian()
+    public function KegiatanPenilaian()
     {
         return $this->belongsTo(KegiatanPenilaian::class, 'kegiatan');
+    }
+
+    public function TahapPenilaian()
+    {
+        return $this->KegiatanPenilaian()->TahapPenilaian();
     }
 
     public function DetailPenilaian()

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KegiatanPenilaianController;
+use App\Http\Controllers\KriteriaPenilaianController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\TahapPenilaianController;
 use App\Http\Controllers\UserController;
@@ -33,6 +34,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('{kegiatan}', [KegiatanPenilaianController::class, 'show']);
         Route::put('{kegiatan}', [KegiatanPenilaianController::class, 'update']);
         Route::delete('{kegiatan}', [KegiatanPenilaianController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'kriteria/{periodeId}/{tahapanId}'], function () {
+        Route::apiResource('/', KriteriaPenilaianController::class)->only(['index', 'store']);
+        Route::get('{kriteria}', [KriteriaPenilaianController::class, 'show']);
+        Route::put('{kriteria}', [KriteriaPenilaianController::class, 'update']);
+        Route::delete('{kriteria}', [KriteriaPenilaianController::class, 'destroy']);
     });
 
     Route::apiResource('users', UserController::class);
