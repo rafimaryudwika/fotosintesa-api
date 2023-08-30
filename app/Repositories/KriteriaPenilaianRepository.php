@@ -13,6 +13,8 @@ use App\Models\KegiatanPenilaian;
 use App\Models\KriteriaPenilaian;
 use App\Http\Resources\SingleKriteriaResource;
 use App\Http\Requests\KriteriaPenilaianRequest;
+use App\Http\Resources\KegiatanResource;
+use App\Http\Resources\KriteriaResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class KriteriaPenilaianRepository
@@ -34,7 +36,7 @@ class KriteriaPenilaianRepository
             => $query->where(['periode' => $periodeId, 'tahap_penilaian' => $tahapId]))
             ->get();
 
-        return $kriteria;
+        return KegiatanResource::collection($kriteria);
     }
 
     public function getDataByID(string $periodeId, string $tahapId, string $id)
@@ -97,7 +99,7 @@ class KriteriaPenilaianRepository
     {
         $kriteria = $this->kriteriaPenilaian
             ->whereHas('KegiatanPenilaian.TahapPenilaian', fn ($q) => $q
-            ->where(['id' => $tahapId, 'periode' => $periodeId]))
+                ->where(['id' => $tahapId, 'periode' => $periodeId]))
             ->findOrFail($id);
 
         if (DetailPenilaian::where('kriteria', $id)->count() >= 1) {
