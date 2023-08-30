@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pendaftar extends Model
 {
+    protected $fillable = [
+        'id', 'tgl_daftar', 'nim', 'user_id', 'name', 'daftar_ulang', 'periode'
+    ];
     public function DetailPendaftar()
     {
         return $this->hasOne(DetailPendaftar::class);
