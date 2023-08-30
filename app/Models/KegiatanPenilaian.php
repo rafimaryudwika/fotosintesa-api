@@ -20,7 +20,7 @@ class KegiatanPenilaian extends Model
     }
     public function KriteriaPenilaian()
     {
-        return $this->hasMany(KriteriaPenilaian::class);
+        return $this->hasMany(KriteriaPenilaian::class, 'kegiatan');
     }
     public function AbsensiPeserta()
     {
