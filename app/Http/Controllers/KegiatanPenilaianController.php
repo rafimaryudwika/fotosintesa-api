@@ -49,8 +49,8 @@ class KegiatanPenilaianController extends Controller
     public function show(string $periodeId, string $tahapanId, string $id)
     {
         try {
-            $req = $this->kpService->getDataById($periodeId, $tahapanId, $id);
-            return $this->success('Data salah satu kegiatan penilaian', $req);
+            $req = $this->kpService->getAllData($periodeId, $tahapanId);
+            return $this->success('Data kegiatan penilaian', $req);
         } catch (Exception $e) {
             if (!$e->getCode() || !is_int($e->getCode())) return response()->json($e->__toString(), 500);
             return $this->error($e->getMessage(), 500);
